@@ -1,0 +1,62 @@
+--1.
+SELECT e.first_name, d.department_id, d.department_name
+FROM employees e, departments d
+WHERE e.department_id = d.department_id;
+
+--2.
+SELECT DISTINCT j.job_title
+FROM jobs j, employees e
+WHERE j.job_id = e.job_id AND e.department_id = 30;
+
+--3.
+SELECT e.first_name || ' ' || e.last_name, d.department_name, l.city
+FROM employees e, departments d, locations l
+WHERE e.department_id = d.department_id AND d.location_id = l.location_id AND e.commission_pct IS NULL;
+
+--4.
+SELECT e.first_name || ' ' || e.last_name, d.department_name
+FROM employees e, departments d
+WHERE e.department_id = d.department_id AND e.first_name LIKE '%a%';
+
+--5.
+SELECT e.first_name || ' ' || e.last_name, j.job_title, d.department_id, d.department_name
+FROM employees e, departments d, jobs j, locations l
+WHERE e.department_id = d.department_id AND e.job_id = j.job_id AND d.location_id = l.location_id AND l.city = 'Seattle';
+
+--6.
+SELECT e.first_name || ' ' || e.last_name "Naziv zaposlenog", e.employee_id "Sifra zaposlenog",
+       manager.first_name || ' ' || manager.last_name "Naziv sefa", manager.employee_id "Sifra sefa", l.city "Grad sefa"
+FROM employees e, employees manager, departments d, locations l
+WHERE e.manager_id = manager.employee_id AND manager.department_id = d.department_id AND d.location_id = l.location_id;
+
+--7.
+SELECT e.first_name || ' ' || e.last_name "Naziv zaposlenog", e.employee_id "Sifra zaposlenog",
+       manager.first_name || ' ' || manager.last_name "Naziv sefa", manager.employee_id "Sifra sefa", l.city "Grad sefa"
+FROM employees e
+LEFT JOIN employees manager
+ON e.manager_id = manager.employee_id
+LEFT JOIN departments d
+ON manager.department_id = d.department_id
+LEFT JOIN locations l
+ON d.location_id = l.location_id;
+
+--8.
+SELECT e2.first_name || ' ' || e2.last_name "Zaposlenik", e.department_id "Odjel", e.first_name || ' ' || e.last_name "Drugi zaposlenik iz odjela"
+FROM employees e, employees e2
+WHERE e.department_id = e2.department_id AND e2.employee_id <> e.employee_id
+ORDER BY e.department_id;
+
+--9.
+SELECT e.first_name || ' ' || e.last_name, j.job_title, d.department_name, e.salary, j.min_salary, j.max_salary
+FROM employees e, departments d, jobs j
+WHERE e.department_id = d.department_id AND e.job_id = j.job_id AND e.salary * (1 + Nvl(e.commission_pct, 0)) NOT BETWEEN j.min_salary AND j.max_salary
+
+--10.
+SELECT DISTINCT e.first_name || ' ' || e.last_name, e.hire_date
+FROM employees e, employees e2
+WHERE e.hire_date > e2.hire_date AND e2.last_name = 'Blake' AND e.employee_id <> e2.employee_id;
+
+--11.
+SELECT e.first_name || ' ' || e.last_name, e.hire_date, manager.first_name || ' ' || manager.last_name, manager.hire_date
+FROM employees e, employees manager
+WHERE e.manager_id = manager.employee_id AND e.hire_date < manager.hire_date AND e.employee_id <> manager.employee_id;
